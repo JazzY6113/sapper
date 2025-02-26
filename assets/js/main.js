@@ -23,7 +23,6 @@ function go(page, attribute) {
     });
 
     if (page === 'game') {
-        // Сбросить состояние игры, если это новая игра
         if (game) {
             game.initialize();
         }

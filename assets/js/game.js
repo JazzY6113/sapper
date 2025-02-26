@@ -31,10 +31,10 @@ class Cell {
             this.game.end(false);
         } else {
             this.element.textContent = this.adjacentMines > 0 ? this.adjacentMines : '';
+            this.game.updateScore(5); // Добавляем 5 очков за открытую клетку
             if (this.adjacentMines === 0) {
                 this.game.openAdjacentCells(this);
             }
-            this.game.updateScore(); // Обновляем очки при открытии клетки
         }
     }
 
@@ -53,10 +53,11 @@ class Game {
         this.gridElement = document.querySelector(".grid");
         this.timerElement = document.getElementById("timer");
         this.pointsElement = document.getElementById("points");
+        this.finalPointsElement = document.getElementById("finalPoints");
         this.timer = 0;
         this.startTime = null;
         this.isGameOver = false;
-        this.score = 0; // Инициализация очков
+        this.score = 0;
         this.initialize();
     }
 
@@ -69,6 +70,8 @@ class Game {
         this.placeMines();
         this.calculateAdjacentMines();
         this.startTimer();
+        this.score = 0; // Сбрасываем очки при новой игре
+        this.updatePointsDisplay();
     }
 
     placeMines() {
@@ -123,7 +126,7 @@ class Game {
         const directions = [
             { x: -1, y: -1 }, { x: -1, y: 0 }, { x: -1, y: 1 },
             { x: 0, y: -1 },                     { x: 0, y: 1 },
-            { x: 1, y: -1 }, { x: 1, y: 0 }, { x: 1, y: 1 }
+            { x: 1, y: -1 }, { x: 1, y: 0 },             { x: 1, y: 1 }
         ];
         directions.forEach(dir => {
             const newX = cell.x + dir.x;
@@ -155,7 +158,7 @@ class Game {
         document.getElementById("playerName").textContent = `Поздравляем, ${this.name}!`;
         document.getElementById("endTime").textContent = `Ваше время: ${this.formatTime(Math.floor((Date.now() - this.startTime) / 1000))}`;
         document.getElementById("congratulation").textContent = isWin ? "Вы выиграли!" : "Вы проиграли!";
-        this.pointsElement.textContent = `Очки: ${this.score}`;
+        this.finalPointsElement.textContent = `${this.score}`; // Отображаем финальные очки
     }
 
     formatTime(seconds) {
@@ -164,8 +167,13 @@ class Game {
         return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    updateScore() {
-        this.score++; // Увеличиваем очки за каждую открытую клетку
+    updateScore(points = 0) {
+        this.score += points;
+        this.updatePointsDisplay();
+    }
+
+    updatePointsDisplay() {
+        this.pointsElement.textContent = `${this.score}`;
     }
 
     setName(name) {

@@ -1,7 +1,3 @@
-body {
-    font-family: Arial, sans-serif;
-}
-
 .panel {
     display: flex;
     flex-direction: column;
@@ -14,6 +10,7 @@ body {
     display: grid;
     grid-template-columns: repeat(10, 40px);
     gap: 5px;
+    justify-content: center;
 }
 
 .cell {
@@ -42,20 +39,24 @@ body {
 }
 
 .result-overlay {
-    width: 300px; /* Ширина окна результата */
-    background-color: white; /* Фон окна результата */
-    padding: 20px; /* Отступы внутри окна */
-    border-radius: 10px; /* Скругленные углы */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Тень для эффекта */
-    text-align: center; /* Центрирование текста */
+    width: 500px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
 }
 
 #end {
-    position: relative; /* Для позиционирования окна результата */
-    z-index: 1; /* Убедитесь, что окно выше других элементов */
+    position: relative;
+    z-index: 1;
 }
 
 #game {
     position: relative;
-    z-index: 0; /* Игровое поле уходит на задний план */
+    z-index: 0;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
 }
