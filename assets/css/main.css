@@ -41,10 +41,21 @@ body {
     background-color: red;
 }
 
-.end-game {
-    display: flex;
+.result-overlay {
+    width: 300px; /* Ширина окна результата */
+    background-color: white; /* Фон окна результата */
+    padding: 20px; /* Отступы внутри окна */
+    border-radius: 10px; /* Скругленные углы */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Тень для эффекта */
+    text-align: center; /* Центрирование текста */
 }
 
-.end {
-    width: 40vw;
+#end {
+    position: relative; /* Для позиционирования окна результата */
+    z-index: 1; /* Убедитесь, что окно выше других элементов */
+}
+
+#game {
+    position: relative;
+    z-index: 0; /* Игровое поле уходит на задний план */
 }
