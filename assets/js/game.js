@@ -6,32 +6,32 @@ class Cell {
         this.isOpen = false;
         this.hasMine = false;
         this.adjacentMines = 0;
+        this.isFlagged = false;
         this.createElement();
     }
 
     createElement() {
         this.element = document.createElement("div");
         this.element.className = "cell";
-        this.element.dataset.x = this.x;
-        this.element.dataset.y = this.y;
         this.element.addEventListener("click", () => this.game.openCell(this));
         this.element.addEventListener("contextmenu", (e) => {
             e.preventDefault();
-            this.game.toggleFlag(this);
+            this.toggleFlag();
         });
         this.game.gridElement.appendChild(this.element);
     }
 
     open() {
-        if (this.isOpen) return;
+        if (this.isOpen || this.isFlagged) return;
         this.isOpen = true;
         this.element.classList.add("open");
+
         if (this.hasMine) {
             this.element.classList.add("mine");
             this.game.end(false);
         } else {
-            this.element.textContent = this.adjacentMines > 0 ? this.adjacentMines : '';
-            this.game.updateScore(5); // Добавляем 5 очков за открытую клетку
+            this.element.textContent = this.adjacentMines || "";
+            this.game.updateScore(5);
             if (this.adjacentMines === 0) {
                 this.game.openAdjacentCells(this);
             }
@@ -40,143 +40,128 @@ class Cell {
 
     toggleFlag() {
         if (!this.isOpen) {
+            this.isFlagged = !this.isFlagged;
             this.element.classList.toggle("flag");
         }
     }
 }
 
 class Game {
-    constructor(size, mineCount) {
+    constructor(size, mineCount, playerName) {
         this.size = size;
         this.mineCount = mineCount;
+        this.playerName = playerName;
         this.grid = [];
         this.gridElement = document.querySelector(".grid");
-        this.timerElement = document.getElementById("timer");
         this.pointsElement = document.getElementById("points");
-        this.finalPointsElement = document.getElementById("finalPoints");
-        this.timer = 0;
-        this.startTime = null;
-        this.isGameOver = false;
+        this.timerElement = document.getElementById("timer");
+        this.resultModal = document.getElementById("end");
+        this.resultMessage = document.getElementById("congratulation");
+        this.resultPlayerName = document.getElementById("playerName");
+        this.resultTime = document.getElementById("endTime");
+        this.finalPoints = document.getElementById("finalPoints");
+        this.newGameButton = document.getElementById("newGame");
+        this.timer = null;
+        this.timeLeft = 300;
         this.score = 0;
+        this.gameActive = true;
+        this.overlay = document.getElementById("overlay");
         this.initialize();
     }
 
     initialize() {
-        this.gridElement.innerHTML = '';
-        this.grid = Array.from({ length: this.size }, (_, x) =>
-            Array.from({ length: this.size }, (_, y) => new Cell(this, x, y))
-        );
-
+        this.gridElement.innerHTML = "";
+        this.gridElement.classList.remove("inactive");
+        this.resultModal.classList.add("d-none");
+        this.overlay.classList.add("d-none");
+        this.grid = [...Array(this.size)].map((_, x) => [...Array(this.size)].map((_, y) => new Cell(this, x, y)));
         this.placeMines();
-        this.calculateAdjacentMines();
         this.startTimer();
-        this.score = 0; // Сбрасываем очки при новой игре
-        this.updatePointsDisplay();
     }
 
     placeMines() {
         let minesPlaced = 0;
         while (minesPlaced < this.mineCount) {
-            const x = Math.floor(Math.random() * this.size);
-            const y = Math.floor(Math.random() * this.size);
-            const cell = this.grid[x][y];
+            let x = Math.floor(Math.random() * this.size);
+            let y = Math.floor(Math.random() * this.size);
+            let cell = this.grid[x][y];
             if (!cell.hasMine) {
                 cell.hasMine = true;
                 minesPlaced++;
+                this.updateNumbersAround(x, y);
             }
         }
     }
 
-    calculateAdjacentMines() {
-        this.grid.forEach(row => {
-            row.forEach(cell => {
-                if (cell.hasMine) {
-                    this.incrementAdjacentMines(cell);
+    updateNumbersAround(x, y) {
+        this.getNeighbors(x, y).forEach(cell => cell.adjacentMines++);
+    }
+
+    getNeighbors(x, y) {
+        let neighbors = [];
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                if (dx === 0 && dy === 0) continue;
+                let nx = x + dx, ny = y + dy;
+                if (nx >= 0 && nx < this.size && ny >= 0 && ny < this.size) {
+                    neighbors.push(this.grid[nx][ny]);
                 }
-            });
-        });
-    }
-
-    incrementAdjacentMines(cell) {
-        const directions = [
-            { x: -1, y: -1 }, { x: -1, y: 0 }, { x: -1, y: 1 },
-            { x: 0, y: -1 },                     { x: 0, y: 1 },
-            { x: 1, y: -1 }, { x: 1, y: 0 }, { x: 1, y: 1 }
-        ];
-        directions.forEach(dir => {
-            const newX = cell.x + dir.x;
-            const newY = cell.y + dir.y;
-            if (this.isInBounds(newX, newY)) {
-                this.grid[newX][newY].adjacentMines++;
             }
-        });
-    }
-
-    isInBounds(x, y) {
-        return x >= 0 && x < this.size && y >= 0 && y < this.size;
+        }
+        return neighbors;
     }
 
     openCell(cell) {
-        if (this.isGameOver) return;
+        if (!this.gameActive || cell.isOpen || cell.isFlagged) return;
         cell.open();
-        this.updateScore();
+        this.checkWin();
     }
 
     openAdjacentCells(cell) {
-        const directions = [
-            { x: -1, y: -1 }, { x: -1, y: 0 }, { x: -1, y: 1 },
-            { x: 0, y: -1 },                     { x: 0, y: 1 },
-            { x: 1, y: -1 }, { x: 1, y: 0 },             { x: 1, y: 1 }
-        ];
-        directions.forEach(dir => {
-            const newX = cell.x + dir.x;
-            const newY = cell.y + dir.y;
-            if (this.isInBounds(newX, newY)) {
-                this.grid[newX][newY].open();
+        this.getNeighbors(cell.x, cell.y).forEach(neighbor => {
+            if (!neighbor.isOpen && !neighbor.hasMine) {
+                neighbor.open();
             }
         });
     }
 
-    toggleFlag(cell) {
-        cell.toggleFlag();
+    checkWin() {
+        let totalCells = this.size * this.size;
+        let openedCells = this.grid.flat().filter(cell => cell.isOpen).length;
+        if (openedCells === totalCells - this.mineCount) {
+            this.end(true);
+        }
     }
 
     startTimer() {
-        this.startTime = Date.now();
+        clearInterval(this.timer);
+        this.timeLeft = 300;
         this.timer = setInterval(() => {
-            if (!this.isGameOver) {
-                const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
-                this.timerElement.textContent = this.formatTime(elapsed);
+            if (this.timeLeft <= 0) {
+                this.end(false);
+                return;
             }
+            this.timeLeft--;
+            let minutes = Math.floor(this.timeLeft / 60);
+            let seconds = this.timeLeft % 60;
+            this.timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }, 1000);
     }
 
-    end(isWin) {
-        this.isGameOver = true;
-        clearInterval(this.timer);
-        document.getElementById("end").classList.remove('d-none');
-        document.getElementById("playerName").textContent = `Поздравляем, ${this.name}!`;
-        document.getElementById("endTime").textContent = `Ваше время: ${this.formatTime(Math.floor((Date.now() - this.startTime) / 1000))}`;
-        document.getElementById("congratulation").textContent = isWin ? "Вы выиграли!" : "Вы проиграли!";
-        this.finalPointsElement.textContent = `${this.score}`; // Отображаем финальные очки
-    }
-
-    formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
-    updateScore(points = 0) {
+    updateScore(points) {
         this.score += points;
-        this.updatePointsDisplay();
+        this.pointsElement.textContent = this.score;
     }
 
-    updatePointsDisplay() {
-        this.pointsElement.textContent = `${this.score}`;
-    }
-
-    setName(name) {
-        this.name = name;
+    end(isWin) {
+        clearInterval(this.timer);
+        this.gameActive = false;
+        this.gridElement.classList.add("inactive");
+        this.resultModal.classList.remove("d-none");
+        this.overlay.classList.remove("d-none");
+        this.resultPlayerName.textContent = `Поздравляем, ${this.playerName}!`;
+        this.resultTime.textContent = `Ваше время: ${this.timerElement.textContent}`;
+        this.finalPoints.textContent = this.score;
+        this.resultMessage.textContent = isWin ? "Вы выиграли!" : "Вы проиграли!";
     }
 }

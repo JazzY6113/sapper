@@ -11,40 +11,47 @@
     <script defer src="assets/js/game.js"></script>
 </head>
 <body>
-<main>
-    <div id="start" class="panel d-flex">
-        <div class="left d-flex justify-content-center align-items-center">
-            <div class="w-75 h-75 main d-flex flex-column justify-content-around align-items-center">
-                <h1>Сапер</h1>
-                <div class="changeName d-flex flex-column align-items-center">
-                    <h2>Введите ваше имя:</h2>
-                    <form class="d-flex justify-content-center">
-                        <input type="text" class="form-control" id="nameInput" placeholder="Ваше имя">
-                        <input type="submit" class="btn btn-success" id="startGame" value="Начать" style="margin-left: 10px">
-                    </form>
+    <main>
+        <div id="start" class="panel d-flex">
+            <div class="left d-flex justify-content-center align-items-center">
+                <div class="w-75 h-75 main d-flex flex-column justify-content-around align-items-center">
+                    <h1>Сапер</h1>
+                    <div class="changeName d-flex flex-column align-items-center">
+                        <h2>Введите ваше имя:</h2>
+                        <form class="d-flex justify-content-center">
+                            <input type="text" class="form-control" id="nameInput" placeholder="Ваше имя">
+                            <input type="submit" class="btn btn-success" id="startGame" value="Начать" style="margin-left: 10px" disabled>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="game" class="d-none">
-        <div class="info d-flex justify-content-around align-items-center">
-            <div class="d-flex flex-column justify-content-center">
-                <span>Имя игрока: <span id="name">Имя</span></span>
-                <span>Секундомер: <span id="timer">00:00</span></span>
-                <span>Очки: <span id="points">0</span></span>
+        <div id="game" class="d-none">
+            <div class="info d-flex justify-content-around align-items-center">
+                <div class="d-flex flex-column justify-content-center">
+                    <span>Имя игрока: <span id="name">Имя</span></span>
+                    <span>Секундомер: <span id="timer">00:00</span></span>
+                    <span>Очки: <span id="points">0</span></span>
+                </div>
+            </div>
+            <div class="grid"></div>
+        </div>
+        <div id="overlay" class="overlay d-none"></div>
+        <div id="end" class="panel d-none justify-content-center align-items-center">
+            <div class="result-overlay">
+                <h2><span id="playerName">Поздравляем, Имя!</span></h2>
+                <h2><span id="endTime">Ваше время: 00:00</span></h2>
+                <h2>Ваши очки: <span id="finalPoints">0</span></h2>
+                <h2><span id="congratulation">Вы выиграли!</span></h2>
+                <button id="restart" class="btn btn-success">Начать заново</button>
             </div>
         </div>
-        <div class="grid"></div>
-    </div>
-    <div id="end" class="panel d-none justify-content-center align-items-center">
-        <div class="result-overlay">
-            <h2><span id="playerName">Поздравляем, Имя!</span></h2>
-            <h2><span id="endTime">Ваше время: 00:00</span></h2>
-            <h2><span id="congratulation">Вы выиграли!</span></h2>
-            <h2>Ваши очки: <span id="finalPoints">0</span></h2>
-            <button id="restart" class="btn btn-success">Начать заново</button>
+        <div id="rules" class="rules-panel">
+            <h2>Правила игры:</h2>
+            <p>Цель игры — найти все клетки без мин. Игрок должен открыть клетки на поле, избегая мин. Если игрок открывает клетку с миной, игра заканчивается.</p>
+            <p>Если клетка не содержит мин, на ней будет указано количество мин в соседних клетках. Если игрок открывает все клетки, не содержащие мин, он выигрывает!</p>
+            <p>Если клетка открыта рядом с пустыми клетками, они откроются автоматически.</p>
         </div>
-    </div>
-</main>
+    </main>
 </body>
 </html>

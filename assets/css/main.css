@@ -1,9 +1,55 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.result-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    color: white;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 300px;
+}
+
+.rules-panel {
+    position: fixed;
+    top: 20%;
+    left: 20px;
+    width: 30%;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+}
+
+.rules-panel h2 {
+    margin-bottom: 10px;
+}
+
+.rules-panel p {
+    margin-bottom: 10px;
+}
+
 .panel {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    position: relative;
 }
 
 .grid {
@@ -31,32 +77,18 @@
 }
 
 .cell.flag {
-    background-color: red;
+    background-color: yellow;
 }
 
 .cell.mine {
     background-color: red;
 }
 
-.result-overlay {
-    width: 500px;
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    text-align: center;
+.d-none {
+    display: none;
 }
 
-#end {
-    position: relative;
-    z-index: 1;
-}
-
-#game {
-    position: relative;
-    z-index: 0;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    gap: 20px;
+.inactive {
+    pointer-events: none;
+    opacity: 0.5;
 }

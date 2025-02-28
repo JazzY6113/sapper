@@ -1,44 +1,51 @@
-let name = '';
-let game = null;
+document.addEventListener("DOMContentLoaded", () => {
+    let game = null;
 
-document.getElementById("startGame").addEventListener("click", (e) => {
-    e.preventDefault();
-    name = document.getElementById("nameInput").value.trim();
-    if (name) {
-        game = new Game(10, 10); // 10x10 grid with 10 mines
-        game.setName(name);
-        go('game', 'd-block');
-    }
-});
-
-document.getElementById("restart").addEventListener("click", () => {
-    go('start', 'd-flex');
-    document.getElementById("end").classList.add('d-none');
-});
-
-function go(page, attribute) {
-    const pages = ['start', 'game', 'end'];
-    pages.forEach(el => {
-        document.getElementById(el).classList.toggle('d-none', el !== page);
-    });
-
-    if (page === 'game') {
-        if (game) {
-            game.initialize();
-        }
-    }
-}
-
-window.onload = () => {
-    document.getElementById("nameInput").addEventListener("input", checkName);
-};
-
-function checkName() {
-    const nameInput = document.getElementById("nameInput").value.trim();
     const startButton = document.getElementById("startGame");
-    if (nameInput !== '') {
-        startButton.removeAttribute('disabled');
-    } else {
-        startButton.setAttribute('disabled', 'disabled');
+    if (startButton) {
+        startButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            const playerName = document.getElementById("nameInput").value.trim();
+            if (playerName) {
+                game = new Game(10, 10, playerName);
+                document.getElementById("name").textContent = playerName;
+                go("game");
+            }
+        });
     }
-}
+
+    const restartButton = document.getElementById("restart");
+    if (restartButton) {
+        restartButton.addEventListener("click", () => {
+            document.getElementById("timer").textContent = "00:00";
+            document.getElementById("points").textContent = "0";
+            go("start");
+        });
+    }
+
+    const startGameFromRulesButton = document.getElementById("startGameFromRules");
+    if (startGameFromRulesButton) {
+        startGameFromRulesButton.addEventListener("click", () => {
+            const playerName = prompt("Введите ваше имя:");
+            if (playerName) {
+                game = new Game(10, 10, playerName);
+                go("game");
+            }
+        });
+    }
+
+    const nameInput = document.getElementById("nameInput");
+    if (nameInput) {
+        nameInput.addEventListener("input", function() {
+            startButton.disabled = !this.value.trim();
+        });
+    }
+
+    function go(page) {
+        const pages = ["start", "game", "end"];
+        pages.forEach(el => {
+            document.getElementById(el).classList.toggle("d-none", el !== page);
+        });
+        if (page === "game" && game) game.initialize();
+    }
+});
