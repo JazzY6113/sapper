@@ -5,30 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Сапер</title>
     <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <script defer src="assets/js/bootstrap.bundle.min.js"></script>
     <script defer src="assets/js/main.js"></script>
     <script defer src="assets/js/game.js"></script>
 </head>
 <body>
     <main>
-        <div id="start" class="panel d-flex">
-            <div class="left d-flex justify-content-center align-items-center">
-                <div class="w-75 h-75 main d-flex flex-column justify-content-around align-items-center">
-                    <h1>Сапер</h1>
-                    <div class="changeName d-flex flex-column align-items-center">
-                        <h2>Введите ваше имя:</h2>
-                        <form class="d-flex justify-content-center">
-                            <input type="text" class="form-control" id="nameInput" placeholder="Ваше имя">
-                            <input type="submit" class="btn btn-success" id="startGame" value="Начать" style="margin-left: 10px" disabled>
-                        </form>
-                    </div>
-                </div>
+        <div id="start" class="panel">
+            <h1>Сапер</h1>
+            <div class="changeName">
+                <h2>Введите ваше имя:</h2>
+                <form class="form">
+                    <input type="text" class="input" id="nameInput" placeholder="Ваше имя">
+                    <input type="submit" class="button" id="startGame" value="Начать" disabled>
+                </form>
             </div>
         </div>
         <div id="game" class="d-none">
-            <div class="info d-flex justify-content-around align-items-center">
-                <div class="d-flex flex-column justify-content-center">
+            <div class="info">
+                <div>
                     <span>Имя игрока: <span id="name">Имя</span></span>
                     <span>Секундомер: <span id="timer">00:00</span></span>
                     <span>Очки: <span id="points">0</span></span>
@@ -37,13 +31,13 @@
             <div class="grid"></div>
         </div>
         <div id="overlay" class="overlay d-none"></div>
-        <div id="end" class="panel d-none justify-content-center align-items-center">
+        <div id="end" class="panel d-none">
             <div class="result-overlay">
-                <h2><span id="playerName">Поздравляем, Имя!</span></h2>
+                <h2><span id="playerName">Имя</span></h2>
                 <h2><span id="endTime">Ваше время: 00:00</span></h2>
                 <h2>Ваши очки: <span id="finalPoints">0</span></h2>
                 <h2><span id="congratulation">Вы выиграли!</span></h2>
-                <button id="restart" class="btn btn-success">Начать заново</button>
+                <button id="restart" class="button">Начать заново</button>
             </div>
         </div>
         <div id="rules" class="rules-panel">

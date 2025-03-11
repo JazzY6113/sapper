@@ -159,7 +159,7 @@ class Game {
         this.gridElement.classList.add("inactive");
         this.resultModal.classList.remove("d-none");
         this.overlay.classList.remove("d-none");
-        this.resultPlayerName.textContent = `Поздравляем, ${this.playerName}!`;
+        this.resultPlayerName.textContent = `${this.playerName}`;
         this.resultTime.textContent = `Ваше время: ${this.timerElement.textContent}`;
         this.finalPoints.textContent = this.score;
         this.resultMessage.textContent = isWin ? "Вы выиграли!" : "Вы проиграли!";
